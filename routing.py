@@ -1,14 +1,15 @@
 import csv
+import numpy as np
 import os.path
 import random
+from scipy import spatial
 import sys
 
 
-# print "number of args: ", len(sys.argv), ' arguments'
-# print "list of args: ", str(sys.argv)
-class Node:
+nodes = {}
 
-    nodes = {}
+"""
+class Node:
 
     def __init__(self,id,x,y):
         self.id = id
@@ -19,7 +20,7 @@ class Node:
 
     def print_node(self,id):
         print "Node:", self.id, "coordinates: (",self.x, ",",self.y,")"
-
+"""
 
 def read_file():
     if ( len(sys.argv) == 2 ):
@@ -42,9 +43,9 @@ def read_file():
 
 def capture_line(input):
     print "capturing line!"
-    n = Node(input[0], input[1], input[2])
-    n.nodes[input[0]] = [input[1], input[2]]
-    n.print_node(input[0])
+    # n = Node(input[0], input[1], input[2])
+    nodes[input[0]] = [int(input[1]), int(input[2])]
+    # n.print_node(input[0])
 
 # define Node data structure
 
@@ -54,12 +55,25 @@ def capture_line(input):
 # main program
 if __name__ == '__main__':
     read_file()
-    print Node.nodes
-    nodes_size = len(Node.nodes)
-    keys = list(Node.nodes)
+    print nodes
+    nodes_size = len(nodes)
+    keys = list(nodes)
     random.shuffle(keys)
     print "keys"
     print keys
     print "Order number Node"
     for k, val in enumerate(keys):
         print k+1, "\t", val
+
+    # calc_distance
+    coord = nodes.values()
+    coord = np.array(coord)
+
+    print "coord:",coord
+    print "coord type:",type(coord)
+    pt = coord[0]
+    print "pt:",pt
+    distance, index = spatial.KDTree(coord).query(pt)
+    print distance,index
+    nearest = coord[index]
+    print "nearest:", nearest
